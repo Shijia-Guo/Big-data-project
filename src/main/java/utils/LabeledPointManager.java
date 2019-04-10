@@ -1,6 +1,7 @@
 package utils;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.spark.api.java.JavaRDD;
@@ -22,14 +23,16 @@ public class LabeledPointManager {
 	 * @return
 	 */
 	@SuppressWarnings({ "serial" })
-	public static JavaRDD<LabeledPoint> prepareLabeledPoints(JavaRDD<String> rawData) {
+	public static JavaRDD<LabeledPoint> prepareLabeledPoints(JavaRDD<String> rawData,Set<Integer> featuresToIgnore) {
 		return rawData.map(new Function<String, LabeledPoint>() {
 			public LabeledPoint call(String line) throws Exception {
 				String[] parts = line.split("\\s+");
 				Map<Integer, Double> index2value = new TreeMap<Integer, Double>();
 				for(int i=0;i<parts.length-1;i++){
-						if(!parts[i].equals("-1"))
-							index2value.put(i, Double.parseDouble(parts[i]));
+						if(!parts[i].equals("-1")){
+							if(null == featuresToIgnore || !featuresToIgnore.contains(i))
+								index2value.put(i, Double.parseDouble(parts[i]));
+						}
 				}
 				int size = parts.length-1;
 				int[] indices = new int[index2value.size()];
