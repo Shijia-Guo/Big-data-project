@@ -68,7 +68,7 @@ public class Classifier_RandomForest {
 		long startTime = System.currentTimeMillis();
 		JavaRDD<String> rawInputRdd = jsc.textFile(datapath);
 		//extract labeles points
-		JavaRDD<LabeledPoint> parsedData = LabeledPointManager.prepareLabeledPoints(rawInputRdd);
+		JavaRDD<LabeledPoint> parsedData = LabeledPointManager.prepareLabeledPoints(rawInputRdd,null);
 
 		// Split the data into training and test sets (30% held out for testing)
 		JavaRDD<LabeledPoint>[] splits = parsedData.randomSplit(new double[]{0.7, 0.3});

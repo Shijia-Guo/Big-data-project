@@ -32,20 +32,20 @@ public class Classifier_iter_RandomForest {
 	{
 		//********************************************** LOADING **********************************************
 		//check input parameters
-		if(args.length<7)
-			throw new Exception("Application requires: maxNumberOfIterations, minFMeasure, maxDepth, maxBins, number of trees, dataPath, output directory path");
+		if(args.length<8)
+			throw new Exception("Application requires: maxNumberOfIterations, minFMeasure, maxDepth, maxBins, number of trees,max number of features, dataPath, output directory path");
 
 		//stopping conditions
 		Integer maxIterations = Integer.parseInt(args[0]);
 		Double minFMeasure = Double.parseDouble(args[1]);
 		
 		//output dir must be local
-		String outputDir = args[6];
+		String outputDir = args[7];
 		if(outputDir.startsWith("hdfs") || outputDir.startsWith("local"))
 			throw new Exception("Outpur directory is local by default. You cannot specify the prefix for the path");
 
 		//support files/directories
-		String datapath = args[5];
+		String datapath = args[6];
 		//check output directory
 		DirectoryManager.checkAndDelete(Paths.get(outputDir));
 		if(!Files.exists(Paths.get(outputDir))){
@@ -69,6 +69,7 @@ public class Classifier_iter_RandomForest {
 		String impurity = "gini";
 		Integer maxDepth = Integer.parseInt(args[2]);//only supported <=30
 		Integer maxBins = Integer.parseInt(args[3]);
+		Integer maxFeatures = Integer.parseInt(args[5]);
 		Integer seed = 5121985;
 
 		//stopping conditions
@@ -90,7 +91,7 @@ public class Classifier_iter_RandomForest {
 
 		//iterate
 		long date = new Date().getTime();
-		while(fMeasureCurr>=minFMeasure && iter<maxIterations) {
+		while(fMeasureCurr>=minFMeasure && iter<maxIterations && featuresToIgnore.size() < maxFeatures) {
 			try {
 				long iterStartTime = System.currentTimeMillis();
 				//manage directory
@@ -163,7 +164,6 @@ public class Classifier_iter_RandomForest {
 				trainingData.unpersist(true);
 				testData.unpersist(true);
 				parsedData.unpersist(true);
-				System.out.println("Memory Released");
 			}
 			catch(Exception e){
 				e.printStackTrace();
