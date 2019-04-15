@@ -32,20 +32,20 @@ public class Classifier_iter_RandomForest {
 	{
 		//********************************************** LOADING **********************************************
 		//check input parameters
-		if(args.length<8)
-			throw new Exception("Application requires: maxNumberOfIterations, minFMeasure, maxDepth, maxBins, number of trees,max number of features, dataPath, output directory path");
+		if(args.length<9)
+			throw new Exception("Application requires: number of class, maxNumberOfIterations, minFMeasure, maxDepth, maxBins, number of trees,max number of features, dataPath, output directory path");
 
 		//stopping conditions
-		Integer maxIterations = Integer.parseInt(args[0]);
-		Double minFMeasure = Double.parseDouble(args[1]);
+		Integer maxIterations = Integer.parseInt(args[1]);
+		Double minFMeasure = Double.parseDouble(args[2]);
 		
 		//output dir must be local
-		String outputDir = args[7];
+		String outputDir = args[8];
 		if(outputDir.startsWith("hdfs") || outputDir.startsWith("local"))
 			throw new Exception("Outpur directory is local by default. You cannot specify the prefix for the path");
 
 		//support files/directories
-		String datapath = args[6];
+		String datapath = args[7];
 		//check output directory
 		DirectoryManager.checkAndDelete(Paths.get(outputDir));
 		if(!Files.exists(Paths.get(outputDir))){
@@ -62,14 +62,14 @@ public class Classifier_iter_RandomForest {
 		Set<Integer> featuresToIgnore = new HashSet<Integer>();
 
 		//random forest settings
-		Integer numClasses = 2;
+		Integer numClasses = Integer.parseInt(args[0]);
 		HashMap<Integer, Integer> categoricalFeaturesInfo = new HashMap<>();
-		Integer numTrees = Integer.parseInt(args[4]); 
+		Integer numTrees = Integer.parseInt(args[5]); 
 		String featureSubsetStrategy = "auto";
 		String impurity = "gini";
-		Integer maxDepth = Integer.parseInt(args[2]);//only supported <=30
-		Integer maxBins = Integer.parseInt(args[3]);
-		Integer maxFeatures = Integer.parseInt(args[5]);
+		Integer maxDepth = Integer.parseInt(args[3]);//only supported <=30
+		Integer maxBins = Integer.parseInt(args[4]);
+		Integer maxFeatures = Integer.parseInt(args[6]);
 		Integer seed = 5121985;
 
 		//stopping conditions
