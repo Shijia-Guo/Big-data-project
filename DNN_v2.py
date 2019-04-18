@@ -121,21 +121,22 @@ import tensorflow as tf
 from keras import models
 from keras.layers import Dense,Dropout,normalization
 from keras import optimizers
-
+import keras
 
 # In[15]:
 
 
 def training(x_train, x_test, y_train, y_test, lrate = 0.01, bsize =5, epoch_num = 10):
     model = models.Sequential()
-    model.add(Dense(5000,activation='relu'))
-    model.add(Dense(512,activation='relu'))
+    #model.add(Dense(5000,activation='relu'))
+    #model.add(Dense(512,activation='relu'))
     model.add(Dense(100,activation='relu'))
     model.add(Dense(32,activation='relu'))
     model.add(Dense(6,activation='softmax'))
     sgd = optimizers.SGD(lr=lrate, decay=1e-6, momentum=0.9, nesterov=True)
-    model.compile(loss='categorical_crossentropy', optimizer=sgd)
+    model.compile(loss='categorical_crossentropy', optimizer=sgd,metrics=['accuracy'])
     y_train = keras.utils.to_categorical(y_train, num_classes=6)
+    y_test = keras.utils.to_categorical(y_test, num_classes=6)
     model.fit(x=x_train, y=y_train, batch_size=bsize, epochs=epoch_num, verbose=1)
     loss, acc = model.evaluate(x=x_test, y=y_test)
     print('Test accuracy is {:.4f}'.format(acc))
@@ -150,19 +151,19 @@ def main():
         print('wrong input parameters!')
         sys.exit(1)
     input_filename = argvs[1]
-    cpg2gene_json = argvs[2]
-    gene2cpg_json = argvs[3]
+    cpg2gene = argvs[2]
+    gene2cpg = argvs[3]
     with open(gene2cpg,'r') as f:
         g2c_dict=json.load(f)
     with open(cpg2gene,'r') as f:
         c2g_dict=json.load(f)
-    split_ratio = argvs[4]
+    split_ratio = float(argvs[4])
     if len(argvs) >= 6:
-        lrate = argvs[5]
+        lrate = float(argvs[5])
     if len(argvs) >=7:
-        bsize = argvs[6]
+        bsize = int(argvs[6])
     if len(argvs) == 8:
-        epoch_num = argvs[7]
+        epoch_num = int(argvs[7])
     title, x_arr, y_arr = process_rawdata(input_filename)
     new_x, new_y, new_title = missingvalue_processing(title, x_arr, y_arr,c2g_dict,g2c_dict)
     x_train, x_test, y_train, y_test = split_data(new_x,new_y,split_ratio)
