@@ -1,0 +1,19 @@
+3 scheme: number of genes , cpgsites
+
+after mapping : dimension, missing value number ...
+
+3 original cpgsites: comparison
+
+we choose 0_5:
+
+missing_value processing: method : average 
+
+
+parameters:
+how to split data
+metrics
+analysis
+
+weights visualization
+
+ 
